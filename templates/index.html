@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Secreto</title>
+</head>
+<body>
+    <h1>Amigo Secreto</h1>
+    <form method="POST">
+        <label for="nomes">Insira os nomes (separados por vírgula):</label><br>
+        <input type="text" id="nomes" name="nomes" required><br>
+        <input type="submit" value="Adicionar Nomes">
+    </form>
+
+    <h2>Nomes:</h2>
+    <ul>
+        {% for nome in nomes %}
+            <li>{{ nome }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Sorteio</h2>
+    <form id="sorteioForm">
+        <label for="usuario">Insira seu nome:</label><br>
+        <input type="text" id="usuario" name="usuario" required><br>
+        <button type="button" onclick="sorteio()">Sortear</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        function sorteio() {
+            const form = document.getElementById('sorteioForm');
+            const formData = new FormData(form);
+            fetch('/sorteio', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultadoDiv = document.getElementById('resultado');
+                if (data.error) {
+                    resultadoDiv.innerText = data.error;
+                } else if (data.info) {
+                    resultadoDiv.innerText = data.info;
+                } else {
+                    resultadoDiv.innerText = 'Você sorteou: ' + data.sorteado;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
